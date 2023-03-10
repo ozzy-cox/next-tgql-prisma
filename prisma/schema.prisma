@@ -10,10 +10,12 @@ generator client {
 generator typegraphql {
   provider = "typegraphql-prisma"
   output   = "../prisma/generated/type-graphql"
+  emitRedundantTypesInfo = true
+
   // emitOnly = "enums, models, crudResolvers, relationResolvers, inputs,outputs"
-  // useSimpleInputs = true
+  useSimpleInputs = true
   // simpleResolvers = true // may improve resolver performance
-  // emitIdAsIDType = true // emits id as id type instead of prisma type, needed for using relay
+  emitIdAsIDType = true // emits id as id type instead of prisma type, needed for using relay
 }
 
 // Models and fields can be renamed
