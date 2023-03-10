@@ -1,3 +1,4 @@
+import prisma from '../lib/prisma'
 import queryGraphql from '../shared/query-graphql'
 
 export default function UserProfile({ user }) {
@@ -6,7 +7,7 @@ export default function UserProfile({ user }) {
   }
   return (
     <h1>
-      {user.username} is {user.name}
+      {user.name} is {user.name}
     </h1>
   )
 }
@@ -14,32 +15,15 @@ export default function UserProfile({ user }) {
 export async function getStaticProps(context) {
   const { params } = context
   const { username } = params
-  const { user = null } = await queryGraphql(
-    `
-    query($username: String) {
-      user(username: $username) {
-        name
-        username
-      }
-    }
-  `,
-    { username }
-  )
+  const user = await prisma.user.findFirst({ where: { name: username } })
   return { props: { user } }
 }
 
 export async function getStaticPaths() {
-  const { users } = (await queryGraphql(`
-    query {
-      users {
-        username
-      }
-    }
-  `)) as { users: { username: string }[] }
-
+  const users = await prisma.user.findMany()
   return {
-    paths: users.map(({ username }) => ({
-      params: { username },
+    paths: users.map(({ name }) => ({
+      params: { username: name },
     })),
     fallback: true,
   }

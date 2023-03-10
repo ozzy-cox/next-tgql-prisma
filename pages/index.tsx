@@ -1,6 +1,5 @@
 import Link from 'next/link'
-
-import queryGraphql from '../shared/query-graphql'
+import prisma from '../lib/prisma'
 
 export default function UserListing({ users }) {
   return (
@@ -9,7 +8,7 @@ export default function UserListing({ users }) {
       <ul>
         {users.map((user) => (
           <li key={user.username}>
-            <Link href="/[username]" as={`/${user.username}`}>
+            <Link href="/[username]" as={`/${user.name}`}>
               {user.name}
             </Link>
           </li>
@@ -20,13 +19,6 @@ export default function UserListing({ users }) {
 }
 
 export async function getStaticProps() {
-  const { users } = await queryGraphql(`
-    query {
-      users {
-        name
-        username
-      }
-    }
-  `)
+  const users = await prisma.user.findMany()
   return { props: { users } }
 }
